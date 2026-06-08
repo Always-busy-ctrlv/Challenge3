@@ -18,5 +18,17 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+      'no-eval': 'error',
+      'no-implied-eval': 'error',
+      'no-new-func': 'error',
+      'no-script-url': 'error',
+      'eqeqeq': ['error', 'always'],
+      'no-self-compare': 'error',
+      'no-shadow-restricted-names': 'error',
+      'no-proto': 'error',
+      'no-extend-native': 'error',
+      'no-alert': 'error'
+    }
   },
 ])
