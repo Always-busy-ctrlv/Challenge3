@@ -9,6 +9,5 @@ RUN npm run build
 # Step 2: Serve the SPA application using Nginx
 FROM nginx:alpine
 COPY --from=build /app/dist /usr/share/nginx/html
-COPY default.conf.template /etc/nginx/templates/default.conf.template
-ENV PORT=8080
+COPY default.conf /etc/nginx/conf.d/default.conf
 EXPOSE 8080
