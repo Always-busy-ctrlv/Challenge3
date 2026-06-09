@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCarbon } from '../context/CarbonContext';
+import { useCarbon } from '../context/useCarbon';
 import { calculateTotalEmissions } from '../utils/calculator';
 import { Flame, ShieldAlert, Award, RefreshCw } from 'lucide-react';
 
@@ -24,31 +24,17 @@ export const DashboardOverview: React.FC = () => {
   const strokeDashoffset = circumference - (budgetPercent / 100) * circumference;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div className="flex-col gap-24">
       {/* Top Banner Row */}
-      <div 
-        className="glass-panel" 
-        style={{ 
-          padding: '24px', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'space-between',
-          flexWrap: 'wrap', 
-          gap: '20px',
-          borderLeft: '4px solid var(--primary)'
-        }}
-      >
+      <div className="glass-panel flex-between flex-wrap gap-20 p-24 dashboard-banner">
         <div>
-          <span style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            Live Performance
-          </span>
-          <h2 style={{ fontSize: '1.6rem', marginTop: '4px' }}>CarbonPulse Dashboard</h2>
+          <span className="dashboard-label">Live Performance</span>
+          <h2 className="text-5xl mt-4">CarbonPulse Dashboard</h2>
         </div>
         
         <button 
-          className="btn btn-danger" 
+          className="btn btn-danger btn-sm" 
           onClick={resetData}
-          style={{ padding: '8px 16px', fontSize: '0.8rem' }}
           aria-label="Reset all carbon footprint data"
         >
           <RefreshCw size={14} aria-hidden="true" />
@@ -57,11 +43,11 @@ export const DashboardOverview: React.FC = () => {
       </div>
 
       {/* Hero Stats Row: Ring + Category Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+      <div className="grid-auto-fit-280">
         
         {/* Budget Circular Ring Visualizer */}
-        <div className="glass-panel animate-glow" style={{ padding: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px' }}>
-          <div style={{ position: 'relative', width: '120px', height: '120px' }}>
+        <div className="glass-panel animate-glow flex-center gap-24 p-24">
+          <div className="relative" style={{ width: '120px', height: '120px' }}>
             <svg height="120" width="120" style={{ transform: 'rotate(-90deg)' }} aria-hidden="true">
               {/* Background ring */}
               <circle
@@ -85,24 +71,14 @@ export const DashboardOverview: React.FC = () => {
                 strokeLinecap="round"
               />
             </svg>
-            <div style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              textAlign: 'center'
-            }}>
-              <span style={{ display: 'block', fontSize: '1.5rem', fontWeight: 800, fontFamily: 'var(--font-heading)' }}>
-                {budgetPercent}%
-              </span>
-              <span style={{ display: 'block', fontSize: '0.65rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
-                Budget
-              </span>
+            <div className="ring-overlay">
+              <span className="ring-percent">{budgetPercent}%</span>
+              <span className="ring-label">Budget</span>
             </div>
           </div>
 
-          <div style={{ flex: 1 }}>
-            <h3 style={{ fontSize: '1.05rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="flex-1">
+            <h3 className="text-xl flex-row items-center gap-8">
               {isOverBudget ? (
                 <>
                   <ShieldAlert size={18} color="var(--accent-red)" aria-hidden="true" />
@@ -115,7 +91,7 @@ export const DashboardOverview: React.FC = () => {
                 </>
               )}
             </h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '6px', lineHeight: 1.4 }}>
+            <p className="color-secondary text-body mt-6 leading-snug">
               {isOverBudget 
                 ? `Your net emissions exceed the sustainable target of ${budgetTarget.toLocaleString()} kg/yr. Adopt daily habits to reduce.` 
                 : `Awesome! Your net footprint remains within the global carbon budget target of ${budgetTarget.toLocaleString()} kg/yr.`
@@ -125,48 +101,42 @@ export const DashboardOverview: React.FC = () => {
         </div>
 
         {/* Numeric stats cards grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+        <div className="grid-2col">
           
-          <div className="glass-panel" style={{ padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Gross Footprint</span>
+          <div className="glass-panel stat-card">
+            <span className="stat-label">Gross Footprint</span>
             <div>
-              <span style={{ display: 'block', fontSize: '1.4rem', fontWeight: 700 }}>
-                {grossEmissions.toLocaleString()}
-              </span>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>kg CO₂ / year</span>
+              <span className="stat-value">{grossEmissions.toLocaleString()}</span>
+              <span className="stat-unit">kg CO₂ / year</span>
             </div>
           </div>
 
-          <div className="glass-panel" style={{ padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Offsets Logged</span>
+          <div className="glass-panel stat-card">
+            <span className="stat-label">Offsets Logged</span>
             <div>
-              <span style={{ display: 'block', fontSize: '1.4rem', fontWeight: 700, color: 'var(--primary)' }}>
-                -{offsetAmount.toLocaleString()}
-              </span>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>kg CO₂ offset</span>
+              <span className="stat-value color-primary">-{offsetAmount.toLocaleString()}</span>
+              <span className="stat-unit">kg CO₂ offset</span>
             </div>
           </div>
 
-          <div className="glass-panel" style={{ padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Net Emissions</span>
+          <div className="glass-panel stat-card">
+            <span className="stat-label">Net Emissions</span>
             <div>
-              <span style={{ display: 'block', fontSize: '1.4rem', fontWeight: 700 }}>
-                {netEmissions.toLocaleString()}
-              </span>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>kg CO₂ / year</span>
+              <span className="stat-value">{netEmissions.toLocaleString()}</span>
+              <span className="stat-unit">kg CO₂ / year</span>
             </div>
           </div>
 
-          <div className="glass-panel" style={{ padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <div className="glass-panel stat-card">
+            <span className="stat-label-row">
               Active Streak
               {streak > 0 && <Flame size={14} color="var(--accent-orange)" fill="var(--accent-orange)" />}
             </span>
             <div>
-              <span style={{ display: 'block', fontSize: '1.4rem', fontWeight: 700 }}>
+              <span className="stat-value">
                 {streak} {streak === 1 ? 'day' : 'days'}
               </span>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+              <span className="stat-unit">
                 {totalCo2Saved.toLocaleString()} kg saved total
               </span>
             </div>

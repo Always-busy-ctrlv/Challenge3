@@ -1,7 +1,8 @@
 import React from 'react';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { CarbonProvider, useCarbon } from '../context/CarbonContext';
+import { CarbonProvider } from '../context/CarbonContext';
+import { useCarbon } from '../context/useCarbon';
 import { CalculatorWizard } from './CalculatorWizard';
 
 // Helper wrapper to output context values for assertion

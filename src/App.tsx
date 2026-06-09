@@ -1,5 +1,6 @@
 import React from 'react';
-import { CarbonProvider, useCarbon } from './context/CarbonContext';
+import { CarbonProvider } from './context/CarbonContext';
+import { useCarbon } from './context/useCarbon';
 import { CalculatorWizard } from './components/CalculatorWizard';
 import { DashboardOverview } from './components/DashboardOverview';
 import { CarbonDistributionChart } from './components/CarbonDistributionChart';
@@ -14,22 +15,13 @@ const AppContent: React.FC = () => {
 
   if (!isOnboarded) {
     return (
-      <div 
-        className="container animate-fade-in" 
-        style={{ 
-          padding: '40px 16px', 
-          minHeight: '100vh', 
-          display: 'flex', 
-          flexDirection: 'column', 
-          justifyContent: 'center' 
-        }}
-      >
-        <header style={{ textAlign: 'center', marginBottom: '20px' }} role="banner">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: 'var(--primary)', marginBottom: '8px' }}>
+      <div className="container animate-fade-in app-onboarding">
+        <header className="text-center mb-20" role="banner">
+          <div className="app-brand app-brand-lg">
             <Leaf size={32} aria-hidden="true" />
-            <span style={{ fontSize: '2rem', fontWeight: 800, fontFamily: 'var(--font-heading)', color: '#ffffff' }}>CarbonPulse</span>
+            <span className="text-brand font-extrabold font-heading color-white">CarbonPulse</span>
           </div>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
+          <p className="color-secondary text-lg">
             A carbon footprint tracking and habit reduction engine
           </p>
         </header>
@@ -40,38 +32,23 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <div 
-      className="container animate-fade-in" 
-      style={{ 
-        padding: '24px 16px', 
-        display: 'flex', 
-        flexDirection: 'column', 
-        gap: '32px' 
-      }}
-    >
+    <div className="container animate-fade-in app-dashboard">
       {/* Top Brand Header */}
-      <header style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--primary)' }} role="banner">
+      <header className="app-brand" role="banner">
         <Leaf size={28} aria-hidden="true" />
-        <h1 style={{ fontSize: '1.8rem', color: '#ffffff' }}>CarbonPulse</h1>
+        <h1 className="text-hero color-white">CarbonPulse</h1>
       </header>
 
       {/* Main dashboard grid container */}
-      <main 
-        style={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          gap: '24px' 
-        }}
-        role="main"
-      >
+      <main className="flex-col gap-24" role="main">
         <DashboardOverview />
         
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
+        <div className="grid-auto-fit">
           <CarbonDistributionChart answers={answers} />
           <PersonalizedInsights />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
+        <div className="grid-auto-fit">
           <DailyHabitTracker />
           <EducationalHub />
         </div>

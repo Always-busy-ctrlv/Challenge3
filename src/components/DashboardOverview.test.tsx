@@ -1,7 +1,8 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { CarbonProvider, useCarbon } from '../context/CarbonContext';
+import { CarbonProvider } from '../context/CarbonContext';
+import { useCarbon } from '../context/useCarbon';
 import { DashboardOverview } from './DashboardOverview';
 
 // Consumer component to display onboarding status (so we can assert on resets)

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useCarbon } from '../context/CarbonContext';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useCarbon } from '../context/useCarbon';
 import { Shield, Sprout, DollarSign } from 'lucide-react';
 
 interface Project {
@@ -52,18 +52,37 @@ export const EducationalHub: React.FC = () => {
   // Calculate cost (1 tonne = 1000 kg)
   const simulatedCost = (sanitizedAmount / 1000) * activeProject.costPerTonne;
 
-  const handleOffsetSubmit = (e: React.FormEvent) => {
+  // Use a ref to track the timeout ID for proper cleanup
+  const successTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup the success timer on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (successTimerRef.current !== null) {
+        clearTimeout(successTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handleOffsetSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (sanitizedAmount > 0) {
       addOffset(sanitizedAmount);
       setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 3000);
+      // Clear any existing timer before starting a new one
+      if (successTimerRef.current !== null) {
+        clearTimeout(successTimerRef.current);
+      }
+      successTimerRef.current = setTimeout(() => {
+        setShowSuccess(false);
+        successTimerRef.current = null;
+      }, 3000);
     }
-  };
+  }, [sanitizedAmount, addOffset]);
 
-  const setAmountPreset = (preset: number) => {
+  const setAmountPreset = useCallback((preset: number) => {
     setInputAmount(preset.toString());
-  };
+  }, []);
 
   return (
     <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>

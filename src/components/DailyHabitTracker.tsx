@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useCarbon, DAILY_HABITS } from '../context/CarbonContext';
+import { useCarbon } from '../context/useCarbon';
+import { DAILY_HABITS } from '../context/carbonHelpers';
 import { CheckCircle } from 'lucide-react';
 
 export const DailyHabitTracker: React.FC = () => {

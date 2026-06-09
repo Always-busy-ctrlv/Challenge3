@@ -9,13 +9,10 @@ export interface Insight {
   actionType: string;
 }
 
-/**
- * Generates personalized insights and potential CO2 savings based on user inputs
- */
-export function generateInsights(answers: CalculatorAnswers): Insight[] {
+/** Generates transport-related insights */
+function getTransportInsights(answers: CalculatorAnswers): Insight[] {
   const insights: Insight[] = [];
 
-  // --- Transport Insights ---
   if (answers.carKmPerYear > 3000 && (answers.carType === 'petrol' || answers.carType === 'diesel')) {
     const currentEmissions = answers.carKmPerYear * EMISSION_FACTORS.car[answers.carType];
     const targetEmissions = answers.carKmPerYear * EMISSION_FACTORS.car.electric;
@@ -34,7 +31,6 @@ export function generateInsights(answers: CalculatorAnswers): Insight[] {
   if (answers.flightsShortPerYear > 2 || answers.flightsLongPerYear > 0) {
     const flightEmissions = (answers.flightsShortPerYear * EMISSION_FACTORS.flights.short) +
                             (answers.flightsLongPerYear * EMISSION_FACTORS.flights.long);
-    // Assume we can target a 50% reduction in flights through virtual meetings or train travel
     const saving = Math.round(flightEmissions * 0.5);
 
     insights.push({
@@ -47,11 +43,16 @@ export function generateInsights(answers: CalculatorAnswers): Insight[] {
     });
   }
 
-  // --- Energy Insights ---
+  return insights;
+}
+
+/** Generates energy-related insights */
+function getEnergyInsights(answers: CalculatorAnswers): Insight[] {
+  const insights: Insight[] = [];
+
   if (answers.electricityKwhPerMonth > 150 && answers.cleanEnergyRatio < 80) {
     const annualElectricity = answers.electricityKwhPerMonth * 12;
     const currentEmissions = annualElectricity * EMISSION_FACTORS.grid.electricityCo2PerKwh * (1 - answers.cleanEnergyRatio / 100);
-    // Transition to 100% clean energy
     const saving = Math.round(currentEmissions);
 
     insights.push({
@@ -66,7 +67,6 @@ export function generateInsights(answers: CalculatorAnswers): Insight[] {
 
   if (answers.heatingSource === 'gas' || answers.heatingSource === 'oil') {
     const heatingEmissions = (answers.heatingKwhPerMonth * 12) * EMISSION_FACTORS.heating[answers.heatingSource];
-    // Switch to heat pump (electric heating divided by COP of 3, with 50% clean energy ratio average)
     const targetEmissions = ((answers.heatingKwhPerMonth * 12) / 3) * EMISSION_FACTORS.heating.electricity * 0.5;
     const saving = Math.max(0, Math.round(heatingEmissions - targetEmissions));
 
@@ -82,7 +82,13 @@ export function generateInsights(answers: CalculatorAnswers): Insight[] {
     }
   }
 
-  // --- Diet Insights ---
+  return insights;
+}
+
+/** Generates diet-related insights */
+function getDietInsights(answers: CalculatorAnswers): Insight[] {
+  const insights: Insight[] = [];
+
   if (answers.dietType === 'meat-heavy' || answers.dietType === 'balanced') {
     const currentDiet = EMISSION_FACTORS.diet[answers.dietType];
     const targetDiet = EMISSION_FACTORS.diet['low-meat'];
@@ -113,7 +119,13 @@ export function generateInsights(answers: CalculatorAnswers): Insight[] {
     });
   }
 
-  // --- Consumption Insights ---
+  return insights;
+}
+
+/** Generates consumption-related insights */
+function getConsumptionInsights(answers: CalculatorAnswers): Insight[] {
+  const insights: Insight[] = [];
+
   if (answers.clothingPurchase === 'heavy' || answers.clothingPurchase === 'moderate') {
     const currentClothing = EMISSION_FACTORS.clothing[answers.clothingPurchase];
     const targetClothing = EMISSION_FACTORS.clothing.light;
@@ -132,7 +144,7 @@ export function generateInsights(answers: CalculatorAnswers): Insight[] {
   if (answers.recyclingRate === 'none' || answers.recyclingRate === 'some') {
     const currentRecycle = EMISSION_FACTORS.recycling[answers.recyclingRate];
     const targetRecycle = EMISSION_FACTORS.recycling.all;
-    const saving = Math.round(targetRecycle - currentRecycle); // saving is absolute value subtraction since recycling saves CO2
+    const saving = Math.round(targetRecycle - currentRecycle);
 
     insights.push({
       id: 'consumption-recycle',
@@ -144,6 +156,20 @@ export function generateInsights(answers: CalculatorAnswers): Insight[] {
     });
   }
 
-  // Sort insights by potential saving (highest first)
+  return insights;
+}
+
+/**
+ * Generates personalized insights and potential CO2 savings based on user inputs.
+ * Results are sorted by highest potential savings first.
+ */
+export function generateInsights(answers: CalculatorAnswers): Insight[] {
+  const insights: Insight[] = [
+    ...getTransportInsights(answers),
+    ...getEnergyInsights(answers),
+    ...getDietInsights(answers),
+    ...getConsumptionInsights(answers)
+  ];
+
   return insights.sort((a, b) => b.potentialSaving - a.potentialSaving);
 }

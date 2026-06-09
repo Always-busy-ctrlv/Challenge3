@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCarbon } from '../context/CarbonContext';
+import { useCarbon } from '../context/useCarbon';
 import { generateInsights } from '../utils/insights';
 import { Lightbulb, CheckCircle2, TrendingDown } from 'lucide-react';
 

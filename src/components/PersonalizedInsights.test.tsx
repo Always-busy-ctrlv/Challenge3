@@ -1,7 +1,8 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen, act, fireEvent } from '@testing-library/react';
-import { CarbonProvider, useCarbon } from '../context/CarbonContext';
+import { CarbonProvider } from '../context/CarbonContext';
+import { useCarbon } from '../context/useCarbon';
 import { PersonalizedInsights } from './PersonalizedInsights';
 
 const OptimizeAnswersConsumer: React.FC = () => {

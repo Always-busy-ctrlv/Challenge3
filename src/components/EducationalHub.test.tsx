@@ -1,7 +1,8 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
-import { CarbonProvider, useCarbon } from '../context/CarbonContext';
+import { CarbonProvider } from '../context/CarbonContext';
+import { useCarbon } from '../context/useCarbon';
 import { EducationalHub } from './EducationalHub';
 
 // Simple child component to view offset statistics in parent provider

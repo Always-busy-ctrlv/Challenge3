@@ -1,7 +1,8 @@
 import React from 'react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
-import { CarbonProvider, useCarbon } from './CarbonContext';
+import { CarbonProvider } from './CarbonContext';
+import { useCarbon } from './useCarbon';
 import { DEFAULT_ANSWERS } from '../utils/calculator';
 
 // Simple consumer component to expose context values for testing
@@ -76,6 +77,7 @@ describe('CarbonContext Provider', () => {
 
   afterEach(() => {
     localStorage.clear();
+    vi.restoreAllMocks();
   });
 
   it('throws an error when useCarbon is used outside CarbonProvider', () => {
@@ -252,7 +254,6 @@ describe('CarbonContext Provider', () => {
   });
 
   it('handles corrupted localStorage data gracefully by using defaults', () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     localStorage.setItem('carbon_pulse_answers', 'corrupted_base64_data');
 
     render(
@@ -261,14 +262,11 @@ describe('CarbonContext Provider', () => {
       </CarbonProvider>
     );
 
-    // Should fall back to default answer (petrol)
+    // Should fall back to default answer (petrol) without crashing
     expect(screen.getByTestId('carType').textContent).toBe('petrol');
-    expect(consoleSpy).toHaveBeenCalled();
-    consoleSpy.mockRestore();
   });
 
   it('handles localStorage quota exceeded or write errors gracefully', () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const setItemSpy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
       throw new Error('Quota exceeded');
     });
@@ -284,11 +282,10 @@ describe('CarbonContext Provider', () => {
       screen.getByTestId('btn-update').click();
     });
 
-    expect(screen.getByTestId('carType').textContent).toBe('electric'); // Component state still updates
-    expect(consoleSpy).toHaveBeenCalledWith('Local storage set error:', expect.any(Error));
+    // Component state still updates even though localStorage write fails silently
+    expect(screen.getByTestId('carType').textContent).toBe('electric');
 
     setItemSpy.mockRestore();
-    consoleSpy.mockRestore();
   });
 
   it('calculates complex streaks where today is empty and previous multiple days are completed', () => {

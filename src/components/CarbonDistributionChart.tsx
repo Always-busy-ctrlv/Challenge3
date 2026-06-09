@@ -32,12 +32,9 @@ export const CarbonDistributionChart: React.FC<ChartProps> = ({ answers }) => {
   let accumulatedPercentage = 0;
 
   return (
-    <div 
-      className="glass-panel" 
-      style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', flex: 1 }}
-    >
-      <h3 style={{ fontSize: '1.2rem', marginBottom: '4px' }}>Emission Breakdown</h3>
-      <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '-12px' }}>
+    <div className="glass-panel flex-col gap-20 p-24 flex-1">
+      <h3 className="text-2xl mb-4">Emission Breakdown</h3>
+      <p className="color-secondary text-md" style={{ marginTop: '-12px' }}>
         Your carbon footprint divided by source categories.
       </p>
 
@@ -70,13 +67,13 @@ export const CarbonDistributionChart: React.FC<ChartProps> = ({ answers }) => {
       </div>
 
       {total === 0 ? (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '220px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+        <div className="chart-zero-state color-secondary text-base" style={{ height: '220px' }}>
           No emission data logged. Complete the quiz to view.
         </div>
       ) : (
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '32px' }}>
+        <div className="flex-center flex-wrap gap-32">
           {/* SVG Donut */}
-          <div style={{ position: 'relative', width: '180px', height: '180px' }}>
+          <div className="relative" style={{ width: '180px', height: '180px' }}>
             <svg 
               viewBox="0 0 100 100" 
               width="100%" 
@@ -96,7 +93,7 @@ export const CarbonDistributionChart: React.FC<ChartProps> = ({ answers }) => {
                 if (cat.value === 0) return null;
                 const percentage = cat.value / total;
                 const strokeLength = percentage * circumference;
-                const strokeOffset = circumference - (accumulatedPercentage * circumference) + (circumference / 4); // Start at top (12 o'clock)
+                const strokeOffset = circumference - (accumulatedPercentage * circumference) + (circumference / 4);
                 
                 accumulatedPercentage += percentage;
                 
@@ -128,25 +125,16 @@ export const CarbonDistributionChart: React.FC<ChartProps> = ({ answers }) => {
             </svg>
             
             {/* Center Text inside Donut */}
-            <div style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              textAlign: 'center',
-              pointerEvents: 'none'
-            }}>
-              <span style={{ display: 'block', fontSize: '1.6rem', fontWeight: 800, fontFamily: 'var(--font-heading)' }}>
-                {hoveredIndex !== null ? Math.round((categories[hoveredIndex].value / total) * 100) : 100}%
-              </span>
-              <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div className="ring-overlay" style={{ pointerEvents: 'none' }}>
+              <span className="ring-percent text-5xl">{hoveredIndex !== null ? Math.round((categories[hoveredIndex].value / total) * 100) : 100}%</span>
+              <span className="ring-label tracking-wide">
                 {hoveredIndex !== null ? categories[hoveredIndex].name : 'Total'}
               </span>
             </div>
           </div>
 
           {/* Chart Legend */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1, minWidth: '180px' }}>
+          <div className="flex-col gap-12 flex-1" style={{ minWidth: '180px' }}>
             {categories.map((cat, index) => {
               const pct = total > 0 ? Math.round((cat.value / total) * 100) : 0;
               const isSelected = hoveredIndex === index || focusedIndex === index;
@@ -154,20 +142,10 @@ export const CarbonDistributionChart: React.FC<ChartProps> = ({ answers }) => {
               return (
                 <button
                   key={cat.name}
+                  className="chart-legend-btn flex-between w-full"
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
                     background: isSelected ? 'rgba(255, 255, 255, 0.04)' : 'transparent',
-                    border: '1px solid transparent',
-                    borderColor: isSelected ? 'rgba(255, 255, 255, 0.06)' : 'transparent',
-                    borderRadius: '8px',
-                    padding: '6px 12px',
-                    width: '100%',
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    color: 'inherit',
-                    transition: 'var(--transition-fast)'
+                    borderColor: isSelected ? 'rgba(255, 255, 255, 0.06)' : 'transparent'
                   }}
                   onMouseEnter={() => setHoveredIndex(index)}
                   onMouseLeave={() => setHoveredIndex(null)}
@@ -175,13 +153,13 @@ export const CarbonDistributionChart: React.FC<ChartProps> = ({ answers }) => {
                   onBlur={() => setFocusedIndex(null)}
                   aria-label={`${cat.name}: ${cat.value.toLocaleString()} kg CO2, ${pct} percent`}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div style={{ width: '12px', height: '12px', borderRadius: '4px', background: cat.color }} />
-                    <span style={{ fontSize: '0.85rem', fontWeight: isSelected ? 600 : 400 }}>{cat.name}</span>
+                  <div className="flex-row items-center gap-10">
+                    <div className="chart-legend-dot" style={{ background: cat.color }} />
+                    <span className="text-md" style={{ fontWeight: isSelected ? 600 : 400 }}>{cat.name}</span>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'end' }}>
-                    <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{pct}%</span>
-                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{cat.value.toLocaleString()} kg</span>
+                  <div className="flex-col items-end">
+                    <span className="text-md font-semibold">{pct}%</span>
+                    <span className="text-sm color-muted">{cat.value.toLocaleString()} kg</span>
                   </div>
                 </button>
               );
